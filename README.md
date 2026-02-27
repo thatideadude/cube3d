@@ -1,7 +1,3 @@
-This README is designed for the **cub3D** project, a 42 school classic that tasks students with creating a 3D graphical engine using the Raycasting technique—the same logic used in the legendary *Wolfenstein 3D*.
-
----
-
 # cub3D - My First Raycaster
 
 ## 📌 About the Project
