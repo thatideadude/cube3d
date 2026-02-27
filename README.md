@@ -61,7 +61,7 @@ C 225,30,0
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/cub3d.git
+git clone https://github.com/thatideadude/cub3d.git
 cd cub3d
 
 ```
