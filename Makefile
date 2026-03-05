@@ -29,7 +29,7 @@ MLXFLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz
 
 # Source files
 MANDATORY_SRCS = $(MANDATORY_DIR)/cub3d_mandatory.c
-BONUS_SRCS = $(MANDATORY_DIR)/cub3d_mandatory.c
+BONUS_SRCS = bonus/cub3d_bonus.c
 
 # Object files
 MANDATORY_OBJS = $(MANDATORY_SRCS:.c=.o)
@@ -47,18 +47,18 @@ $(NAME): $(MLX) $(MANDATORY_OBJS)
 	@$(CC) $(MANDATORY_OBJS) $(MLXFLAGS) -o $(NAME)
 	@echo "Mandatory version built successfully as $(NAME)"
 
-# Build bonus version (all features including weapons, enemies, minimap, etc.)
+# Build bonus version (all features including mouse/look, minimap, etc.)
 bonus: $(NAME_BONUS)
 
-$(NAME_BONUS): $(MLX) bonus_objs
+$(NAME_BONUS): $(MLX) $(BONUS_OBJS)
 	@echo "Building bonus version..."
-	@$(CC) $(MANDATORY_DIR)/cub3d_mandatory.o $(MLXFLAGS) -o $(NAME_BONUS)
+	@$(CC) $(BONUS_OBJS) $(MLXFLAGS) -o $(NAME_BONUS)
 	@echo "Bonus version built successfully as $(NAME_BONUS)"
 
 # Compile bonus objects with BONUS flag
 bonus_objs:
 	@echo "Compiling bonus version..."
-	@$(CC) $(CFLAGS) -DBONUS -c $(MANDATORY_SRCS) -o $(MANDATORY_DIR)/cub3d_mandatory.o
+	@$(CC) $(CFLAGS) -DBONUS -c $(BONUS_SRCS) -o $(BONUS_OBJS)
 
 # Compile object files
 %.o: %.c
@@ -73,7 +73,7 @@ $(MLX):
 # Clean object files
 clean:
 	@echo "Cleaning object files..."
-	@rm -f $(MANDATORY_OBJS)
+	@rm -f $(MANDATORY_OBJS) $(BONUS_OBJS)
 	@make -C $(MLX_DIR) clean > /dev/null 2>&1 || true
 
 # Full clean including executables

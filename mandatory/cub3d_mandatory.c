@@ -1,5 +1,9 @@
 #include "cub3d_mandatory.h"
 
+#define COLLISION_RADIUS 0.50
+#define MIN_RAY_DISTANCE 0.50
+#define SPRINT_MULT 1.8
+
 // Função para carregar texturas
 int load_textures(t_game *game)
 {
@@ -215,12 +219,86 @@ int is_wall(t_game *game, int x, int y)
     return (game->map[y][x] == '1');
 }
 
-// Raycasting
+// Check whether player can move to (x,y) keeping a small radius from walls
+int can_move(t_game *game, double x, double y)
+{
+    double r = 0.2; // collision radius
+    int ix, iy;
+
+    ix = (int)floor(x - r);
+    iy = (int)floor(y - r);
+    if (is_wall(game, ix, iy)) return 0;
+
+    ix = (int)floor(x + r);
+    iy = (int)floor(y - r);
+    if (is_wall(game, ix, iy)) return 0;
+
+    ix = (int)floor(x - r);
+    iy = (int)floor(y + r);
+    if (is_wall(game, ix, iy)) return 0;
+
+    ix = (int)floor(x + r);
+    iy = (int)floor(y + r);
+    if (is_wall(game, ix, iy)) return 0;
+
+    return 1;
+}
+
+// Resolve player collisions against nearby wall cells using circle-AABB push-out
+void resolve_player_collision(t_game *game)
+{
+    double r = COLLISION_RADIUS;
+    int px_cell = (int)floor(game->player.x);
+    int py_cell = (int)floor(game->player.y);
+
+    // check neighborhood -1..+1 in both axes (expand if needed)
+    for (int wy = py_cell - 1; wy <= py_cell + 1; wy++)
+    {
+        for (int wx = px_cell - 1; wx <= px_cell + 1; wx++)
+        {
+            if (is_wall(game, wx, wy))
+            {
+                // AABB of the wall cell [wx, wx+1] x [wy, wy+1]
+                double closest_x = game->player.x;
+                double closest_y = game->player.y;
+                if (closest_x < (double)wx) closest_x = (double)wx;
+                if (closest_x > (double)(wx + 1)) closest_x = (double)(wx + 1);
+                if (closest_y < (double)wy) closest_y = (double)wy;
+                if (closest_y > (double)(wy + 1)) closest_y = (double)(wy + 1);
+
+                double dx = game->player.x - closest_x;
+                double dy = game->player.y - closest_y;
+                double dist2 = dx * dx + dy * dy;
+                if (dist2 == 0.0)
+                {
+                    // player center exactly on corner; nudge out
+                    dx = game->player.x - (wx + 0.5);
+                    dy = game->player.y - (wy + 0.5);
+                    dist2 = dx * dx + dy * dy;
+                    if (dist2 == 0.0)
+                    {
+                        // arbitrary nudge
+                        dx = 0.01; dy = 0.01; dist2 = dx * dx + dy * dy;
+                    }
+                }
+                double dist = sqrt(dist2);
+                if (dist < r)
+                {
+                    double push = r - dist;
+                    game->player.x += (dx / dist) * push;
+                    game->player.y += (dy / dist) * push;
+                }
+            }
+        }
+    }
+}
+
+// Raycasting (step-based) - reverted from DDA to previous working implementation
 void cast_rays(t_game *game)
 {
     double ray_angle = game->player.angle - (FOV * DR / 2);
     double angle_step = (FOV * DR) / NUM_RAYS;
-    
+
     for (int i = 0; i < NUM_RAYS; i++)
     {
         double distance = 0;
@@ -228,31 +306,31 @@ void cast_rays(t_game *game)
         double ray_y = game->player.y;
         double ray_dx = cos(ray_angle);
         double ray_dy = sin(ray_angle);
-        double step_size = 0.01;
-        
+        double step_size = 0.002; // fine-grained step for precision
+
         game->rays[i].hit_vertical = 0;
         game->rays[i].wall_x = 0;
         game->rays[i].distance = 50;
-        
+
         while (distance < 30)
         {
             double prev_x = ray_x;
-            
+
             ray_x += ray_dx * step_size;
             ray_y += ray_dy * step_size;
             distance += step_size;
-            
+
             if (is_wall(game, (int)ray_x, (int)ray_y))
             {
                 int hit_x = (int)ray_x;
                 int prev_hit_x = (int)prev_x;
-                
-                if (hit_x != prev_hit_x) // Parede vertical
+
+                if (hit_x != prev_hit_x) // vertical wall hit
                 {
                     game->rays[i].hit_vertical = 1;
                     game->rays[i].wall_x = ray_y - floor(ray_y);
                 }
-                else // Parede horizontal
+                else // horizontal wall hit
                 {
                     game->rays[i].hit_vertical = 0;
                     game->rays[i].wall_x = ray_x - floor(ray_x);
@@ -260,9 +338,12 @@ void cast_rays(t_game *game)
                 break;
             }
         }
-        
-        // Correção do efeito fisheye
+
+        // fisheye correction
         distance = distance * cos(ray_angle - game->player.angle);
+        if (distance < MIN_RAY_DISTANCE)
+            distance = MIN_RAY_DISTANCE;
+
         game->rays[i].distance = distance;
         ray_angle += angle_step;
     }
@@ -315,7 +396,10 @@ void render_3d(t_game *game)
         }
         
         // Coordenada X da textura
-        int tex_x = (int)(game->rays[x].wall_x * game->textures[texture_index].width);
+        double wx = game->rays[x].wall_x;
+        if (wx < 0) wx += 1.0;
+        if (wx >= 1.0) wx = fmod(wx, 1.0);
+        int tex_x = (int)(wx * game->textures[texture_index].width);
         if (tex_x < 0) tex_x = 0;
         if (tex_x >= game->textures[texture_index].width) 
             tex_x = game->textures[texture_index].width - 1;
@@ -335,8 +419,9 @@ void render_3d(t_game *game)
             else if (y >= draw_start && y <= draw_end) // PAREDE
             {
                 // ...existing wall rendering code...
-                int tex_y = ((y - draw_start) * game->textures[texture_index].height) / 
-                           (draw_end - draw_start);
+                int wall_h = draw_end - draw_start;
+                if (wall_h <= 0) wall_h = 1;
+                int tex_y = ((y - draw_start) * game->textures[texture_index].height) / wall_h;
                 if (tex_y < 0) tex_y = 0;
                 if (tex_y >= game->textures[texture_index].height) 
                     tex_y = game->textures[texture_index].height - 1;
@@ -369,6 +454,8 @@ void render_3d(t_game *game)
 
 void render_frame(t_game *game)
 {
+    // ensure player is pushed out of walls before raycasting to avoid near-wall artefacts
+    resolve_player_collision(game);
     cast_rays(game);
     render_3d(game);
     mlx_put_image_to_window(game->mlx_ptr, game->win_ptr, game->img_ptr, 0, 0);
@@ -615,8 +702,10 @@ int parse_map_file(char *filename, t_game *game)
 // Movimento do jogador
 void move_player(t_game *game)
 {
-    double move_speed = 0.08;
+    double base_speed = 0.08;
     double rot_speed = 0.05;
+    double sprint = (game->keys.shift) ? SPRINT_MULT : 1.0;
+    double move_speed = base_speed * sprint;
     double new_x, new_y;
     
     // Rotação com setas esquerda/direita
@@ -644,9 +733,9 @@ void move_player(t_game *game)
         new_x = game->player.x + game->player.dx * move_speed;
         new_y = game->player.y + game->player.dy * move_speed;
         
-        if (!is_wall(game, (int)new_x, (int)game->player.y))
+        if (can_move(game, new_x, game->player.y))
             game->player.x = new_x;
-        if (!is_wall(game, (int)game->player.x, (int)new_y))
+        if (can_move(game, game->player.x, new_y))
             game->player.y = new_y;
     }
     
@@ -655,9 +744,9 @@ void move_player(t_game *game)
         new_x = game->player.x - game->player.dx * move_speed;
         new_y = game->player.y - game->player.dy * move_speed;
         
-        if (!is_wall(game, (int)new_x, (int)game->player.y))
+        if (can_move(game, new_x, game->player.y))
             game->player.x = new_x;
-        if (!is_wall(game, (int)game->player.x, (int)new_y))
+        if (can_move(game, game->player.x, new_y))
             game->player.y = new_y;
     }
     
@@ -667,9 +756,9 @@ void move_player(t_game *game)
         new_x = game->player.x + game->player.dy * move_speed; // Perpendicular
         new_y = game->player.y - game->player.dx * move_speed;
         
-        if (!is_wall(game, (int)new_x, (int)game->player.y))
+        if (can_move(game, new_x, game->player.y))
             game->player.x = new_x;
-        if (!is_wall(game, (int)game->player.x, (int)new_y))
+        if (can_move(game, game->player.x, new_y))
             game->player.y = new_y;
     }
     
@@ -678,11 +767,14 @@ void move_player(t_game *game)
         new_x = game->player.x - game->player.dy * move_speed; // Perpendicular
         new_y = game->player.y + game->player.dx * move_speed;
         
-        if (!is_wall(game, (int)new_x, (int)game->player.y))
+        if (can_move(game, new_x, game->player.y))
             game->player.x = new_x;
-        if (!is_wall(game, (int)game->player.x, (int)new_y))
+        if (can_move(game, game->player.x, new_y))
             game->player.y = new_y;
     }
+
+    // after movement attempts, resolve collisions to enforce invisible wall
+    resolve_player_collision(game);
 }
 
 // Eventos de teclas
@@ -697,6 +789,7 @@ int key_press(int keycode, t_game *game)
     else if (keycode == 115) game->keys.s = 1;           // S
     else if (keycode == 97) game->keys.a = 1;            // A
     else if (keycode == 100) game->keys.d = 1;           // D
+    else if (keycode == 65505 || keycode == 65506 || keycode == 301) game->keys.shift = 1; // Shift
     else if (keycode == 65361) game->keys.left_arrow = 1;  // Seta esquerda
     else if (keycode == 65363) game->keys.right_arrow = 1; // Seta direita
 
@@ -709,6 +802,7 @@ int key_release(int keycode, t_game *game)
     else if (keycode == 115) game->keys.s = 0;      // S
     else if (keycode == 97) game->keys.a = 0;       // A
     else if (keycode == 100) game->keys.d = 0;      // D
+    else if (keycode == 65505 || keycode == 65506 || keycode == 301) game->keys.shift = 0; // Shift
     else if (keycode == 65361) game->keys.left_arrow = 0;  // Seta esquerda
     else if (keycode == 65363) game->keys.right_arrow = 0; // Seta direita
 

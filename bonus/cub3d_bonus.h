@@ -1,5 +1,5 @@
-#ifndef CUB3D_MANDATORY_H
-# define CUB3D_MANDATORY_H
+#ifndef CUB3D_BONUS_H
+# define CUB3D_BONUS_H
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -19,18 +19,33 @@
 # define PI 3.14159265359
 # define DR 0.0174533
 
+// Bonus-specific tunables
+// Mouse sensitivity tuning (lower values = slower look)
+// Adjust these to change how fast the view moves with mouse input
+# define MOUSE_SENS 0.0006   /* horizontal sensitivity (radians per pixel) */
+# define MOUSE_VSENS 0.06    /* vertical sensitivity (pixels per pixel) */
+
+// Minimap tunables (display size and padding)
+# define MINIMAP_MAX_W 200
+# define MINIMAP_MAX_H 200
+# define MINIMAP_PADDING 10
+
 typedef struct s_player {
     double x;
     double y;
     double angle;
     double dx;
     double dy;
+    double pitch; // olhar para cima/baixo em pixels (bonus)
 } t_player;
 
 typedef struct s_ray {
     double distance;
     int hit_vertical;
     double wall_x;
+    int map_x;
+    int map_y;
+    int is_door;
 } t_ray;
 
 typedef struct s_texture {
@@ -75,10 +90,12 @@ typedef struct s_game {
     t_player player;
     t_ray rays[NUM_RAYS];
     t_texture textures[4]; // 0=North, 1=South, 2=West, 3=East
+    t_texture door_texture; // texture for doors (bonus)
     t_texture floor_texture;   // Textura do chão
     t_texture ceiling_texture; // Textura do teto
-    char *texture_paths[6];    // 4 paredes + chão + teto
-    
+    char *texture_paths[7];    // 4 paredes + chão + teto + porta
+    int use_door_texture;
+
     // Manter cores como fallback se não houver texturas
     t_color floor_color;
     t_color ceiling_color;
@@ -86,6 +103,15 @@ typedef struct s_game {
     int use_ceiling_texture;   // Flag para usar textura ou cor
     
     t_keys keys;
+    // Door state tracking (simple list)
+    struct s_door {
+        int x;
+        int y;
+        int ox; // direction vector from door towards the side the player opened from
+        int oy;
+        int active;
+    } doors[64];
+    int door_count;
 } t_game;
 
 // Funções principais
@@ -109,5 +135,12 @@ int parse_texture_path(char *path_str, char **texture_path);
 int load_floor_ceiling_textures(t_game *game);
 int get_floor_ceiling_color(t_game *game, int x, int y, int is_ceiling, double ray_angle, double distance);
 int validate_map(t_game *game);
+
+/* Door functions (bonus) */
+int open_door_in_front(t_game *game);
+void update_doors(t_game *game);
+
+/* Minimap functions (bonus) */
+void draw_minimap(t_game *game);
 
 #endif

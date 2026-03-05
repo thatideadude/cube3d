@@ -1,9 +1,9 @@
-NO ./textures/north.xpm
-SO ./textures/south.xpm
-WE ./textures/west.xpm
-EA ./textures/east.xpm
+NO ./textures/Funny/NO.xpm
+SO ./textures/Funny/SO.xpm
+WE ./textures/Funny/WE.xpm
+EA ./textures/Funny/EA.xpm
 
-F ./textures/floor.xpm
+F ./textures/Funny/Floor.xpm
 C 135,206,235
 
         1111111111111111111111111
