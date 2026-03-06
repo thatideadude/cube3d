@@ -19,18 +19,27 @@
 # define PI 3.14159265359
 # define DR 0.0174533
 
+/* Shared tunables moved to header so split modules can use them */
+# define COLLISION_RADIUS 0.50
+# define MIN_RAY_DISTANCE 0.50
+# define SPRINT_MULT 1.8
+
 typedef struct s_player {
     double x;
     double y;
     double angle;
     double dx;
     double dy;
+    double pitch; // vertical look offset (pixels)
 } t_player;
 
 typedef struct s_ray {
     double distance;
     int hit_vertical;
     double wall_x;
+    int map_x;
+    int map_y;
+    int is_door;
 } t_ray;
 
 typedef struct s_texture {
@@ -90,13 +99,16 @@ typedef struct s_game {
 
 // Funções principais
 int parse_map_file(char *filename, t_game *game);
+int parse_file_to_temp_map(char *filename, char temp_map[50][1024], int *map_lines, t_game *game);
+int parse_color(char *color_str, t_color *color);
+int validate_map(t_game *game);
 void free_map(char **map);
 void init_player(t_game *game);
+int load_textures(t_game *game);
+int get_texture_color(t_texture *texture, int x, int y);
 void cast_rays(t_game *game);
 void render_3d(t_game *game);
 void draw_pixel(t_game *game, int x, int y, int color);
-int load_textures(t_game *game);
-int get_texture_color(t_texture *texture, int x, int y);
 int key_press(int keycode, t_game *game);
 int key_release(int keycode, t_game *game);
 int update_game(t_game *game);
@@ -104,10 +116,25 @@ void move_player(t_game *game);
 void render_frame(t_game *game);
 int is_wall(t_game *game, int x, int y);
 int close_hook(t_game *game);
-int parse_color(char *color_str, t_color *color);
-int parse_texture_path(char *path_str, char **texture_path);
-int load_floor_ceiling_textures(t_game *game);
+
+/* Additional prototypes required after splitting files */
 int get_floor_ceiling_color(t_game *game, int x, int y, int is_ceiling, double ray_angle, double distance);
-int validate_map(t_game *game);
+void resolve_player_collision(t_game *game);
+
+/* New helper prototypes added to split large functions */
+int handle_texture_directive(char *line, t_game *game);
+int append_map_line(char temp_map[50][1024], int *map_lines, char *line);
+int finalize_map(char temp_map[50][1024], int map_lines, t_game *game);
+void compute_wall_tex_coords(t_game *game, int x, int *texture_index, int *tex_x);
+int sample_wall_color(t_game *game, int y, int draw_start, int draw_end, int tex_x, int texture_index);
+
+double trace_ray(t_game *game, int i, double ray_angle);
+void render_column(t_game *game, int x, int draw_start, int draw_end, int texture_index, int tex_x, double distance);
+
+int load_wall_textures(t_game *game);
+int load_floor_ceiling_textures(t_game *game);
+
+int get_ceiling_sample(t_game *game, int screen_x, int screen_y, double ray_angle);
+int get_floor_sample(t_game *game, int screen_x, int screen_y, double ray_angle);
 
 #endif

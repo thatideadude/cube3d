@@ -25,6 +25,11 @@
 # define MOUSE_SENS 0.0006   /* horizontal sensitivity (radians per pixel) */
 # define MOUSE_VSENS 0.06    /* vertical sensitivity (pixels per pixel) */
 
+/* Shared tunables (also present in mandatory header) */
+# define COLLISION_RADIUS 0.50
+# define MIN_RAY_DISTANCE 0.50
+# define SPRINT_MULT 1.8
+
 // Minimap tunables (display size and padding)
 # define MINIMAP_MAX_W 200
 # define MINIMAP_MAX_H 200
@@ -116,25 +121,23 @@ typedef struct s_game {
 
 // Funções principais
 int parse_map_file(char *filename, t_game *game);
-void free_map(char **map);
 void init_player(t_game *game);
 void cast_rays(t_game *game);
+double trace_ray(t_game *game, int i, double ray_angle);
 void render_3d(t_game *game);
 void draw_pixel(t_game *game, int x, int y, int color);
 int load_textures(t_game *game);
-int get_texture_color(t_texture *texture, int x, int y);
 int key_press(int keycode, t_game *game);
 int key_release(int keycode, t_game *game);
 int update_game(t_game *game);
 void move_player(t_game *game);
+void resolve_player_collision(t_game *game);
 void render_frame(t_game *game);
-int is_wall(t_game *game, int x, int y);
 int close_hook(t_game *game);
-int parse_color(char *color_str, t_color *color);
 int parse_texture_path(char *path_str, char **texture_path);
 int load_floor_ceiling_textures(t_game *game);
 int get_floor_ceiling_color(t_game *game, int x, int y, int is_ceiling, double ray_angle, double distance);
-int validate_map(t_game *game);
+int mouse_move(int x, int y, t_game *game);
 
 /* Door functions (bonus) */
 int open_door_in_front(t_game *game);
@@ -142,5 +145,21 @@ void update_doors(t_game *game);
 
 /* Minimap functions (bonus) */
 void draw_minimap(t_game *game);
+
+/* Minimap helpers */
+void minimap_put_pixel(t_game *game, int x, int y, int color);
+void minimap_draw_line(t_game *game, int x0, int y0, int x1, int y1, int color);
+void minimap_fill_circle(t_game *game, int cx, int cy, int r, int color);
+void minimap_draw_cells(t_game *game, int dest_x, int dest_y, double scale, int draw_w, int draw_h);
+void minimap_draw_background(t_game *game, int bx, int by, int bw, int bh, int bg_color, int inner_shadow);
+void minimap_draw_direction_and_tip(t_game *game, double angle, int px, int py, int map_w, int map_h, double scale);
+void minimap_draw_marker_and_border(t_game *game, int bx, int by, int bw, int bh, int px, int py, double scale);
+
+/* Utility functions provided by mandatory or bonus helpers */
+int parse_color(char *color_str, t_color *color);
+void free_map(char **map);
+int validate_map(t_game *game);
+int is_wall(t_game *game, int x, int y);
+int get_texture_color(t_texture *texture, int x, int y);
 
 #endif

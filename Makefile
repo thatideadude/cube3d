@@ -28,8 +28,17 @@ CFLAGS = -Wall -Wextra -Werror -g -I$(MLX_DIR)
 MLXFLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz
 
 # Source files
-MANDATORY_SRCS = $(MANDATORY_DIR)/cub3d_mandatory.c
-BONUS_SRCS = bonus/cub3d_bonus.c
+MANDATORY_SRCS = $(MANDATORY_DIR)/main.c \
+	$(MANDATORY_DIR)/parse.c \
+	$(MANDATORY_DIR)/parse_utils.c \
+	$(MANDATORY_DIR)/textures.c \
+	$(MANDATORY_DIR)/player.c \
+	$(MANDATORY_DIR)/raycast.c \
+	$(MANDATORY_DIR)/raycast_utils.c \
+	$(MANDATORY_DIR)/input.c \
+	$(MANDATORY_DIR)/floor.c
+# Collect all bonus source files automatically
+BONUS_SRCS := $(wildcard bonus/*.c)
 
 # Object files
 MANDATORY_OBJS = $(MANDATORY_SRCS:.c=.o)
@@ -37,6 +46,9 @@ BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 
 # MLX Library
 MLX = $(MLX_DIR)/libmlx.a
+
+# When building bonus, only link a small set of mandatory helper objects
+MANDATORY_HELPERS_OBJS = mandatory/parse.o mandatory/textures.o mandatory/player.o
 
 # Default target - builds mandatory version only
 all: $(NAME)
@@ -47,13 +59,20 @@ $(NAME): $(MLX) $(MANDATORY_OBJS)
 	@$(CC) $(MANDATORY_OBJS) $(MLXFLAGS) -o $(NAME)
 	@echo "Mandatory version built successfully as $(NAME)"
 
-# Build bonus version (all features including mouse/look, minimap, etc.)
-bonus: $(NAME_BONUS)
+# Force helper for always-rebuild targets
+.PHONY: FORCE
 
-$(NAME_BONUS): $(MLX) $(BONUS_OBJS)
+# Build bonus version (link only bonus objects)
+# Make the binary depend on FORCE so 'make bonus' rebuilds reliably
+$(NAME_BONUS): FORCE $(MLX) $(BONUS_OBJS)
 	@echo "Building bonus version..."
 	@$(CC) $(BONUS_OBJS) $(MLXFLAGS) -o $(NAME_BONUS)
 	@echo "Bonus version built successfully as $(NAME_BONUS)"
+
+# Make 'bonus' a phony shortcut to the bonus binary
+.PHONY: bonus
+bonus: $(NAME_BONUS)
+	@true
 
 # Compile bonus objects with BONUS flag
 bonus_objs:
@@ -73,7 +92,8 @@ $(MLX):
 # Clean object files
 clean:
 	@echo "Cleaning object files..."
-	@rm -f $(MANDATORY_OBJS) $(BONUS_OBJS)
+	@rm -f $(MANDATORY_OBJS) $(BONUS_OBJS) || true
+	@find . -name "*.o" -print -delete || true
 	@make -C $(MLX_DIR) clean > /dev/null 2>&1 || true
 
 # Full clean including executables
@@ -164,4 +184,4 @@ help:
 	@echo "  - Enhanced HUD"
 
 .PHONY: all bonus clean fclean re re_bonus run run_bonus test test_bonus \
-        check install install_bonus help
+        check install install_bonus help FORCE
