@@ -14,7 +14,7 @@
 
 # Project names
 NAME = cub3d
-NAME_BONUS = cub3d_bonus
+
 
 # Directories
 MANDATORY_DIR = mandatory
@@ -25,24 +25,33 @@ MAPS_DIR = maps
 # Compilation
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g -I$(MLX_DIR)
-MLXFLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz
+MLXFLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz -o3
 
 # Source files
 MANDATORY_SRCS = $(MANDATORY_DIR)/main.c \
 	$(MANDATORY_DIR)/parse.c \
 	$(MANDATORY_DIR)/parse_utils.c \
+	$(MANDATORY_DIR)/parse_read.c \
+	$(MANDATORY_DIR)/parse_finalize.c \
+	$(MANDATORY_DIR)/parse_validate.c \
+	$(MANDATORY_DIR)/ft_utils_a.c \
+	$(MANDATORY_DIR)/ft_utils_b.c \
 	$(MANDATORY_DIR)/textures.c \
 	$(MANDATORY_DIR)/player.c \
+	$(MANDATORY_DIR)/player_move.c \
+	$(MANDATORY_DIR)/player_collision.c \
 	$(MANDATORY_DIR)/raycast.c \
+	$(MANDATORY_DIR)/raycast_column.c \
 	$(MANDATORY_DIR)/raycast_utils.c \
 	$(MANDATORY_DIR)/input.c \
+	$(MANDATORY_DIR)/cleanup.c \
 	$(MANDATORY_DIR)/floor.c
 # Collect all bonus source files automatically
-BONUS_SRCS := $(wildcard bonus/*.c)
+
 
 # Object files
 MANDATORY_OBJS = $(MANDATORY_SRCS:.c=.o)
-BONUS_OBJS = $(BONUS_SRCS:.c=.o)
+
 
 # MLX Library
 MLX = $(MLX_DIR)/libmlx.a
@@ -61,23 +70,6 @@ $(NAME): $(MLX) $(MANDATORY_OBJS)
 
 # Force helper for always-rebuild targets
 .PHONY: FORCE
-
-# Build bonus version (link only bonus objects)
-# Make the binary depend on FORCE so 'make bonus' rebuilds reliably
-$(NAME_BONUS): FORCE $(MLX) $(BONUS_OBJS)
-	@echo "Building bonus version..."
-	@$(CC) $(BONUS_OBJS) $(MLXFLAGS) -o $(NAME_BONUS)
-	@echo "Bonus version built successfully as $(NAME_BONUS)"
-
-# Make 'bonus' a phony shortcut to the bonus binary
-.PHONY: bonus
-bonus: $(NAME_BONUS)
-	@true
-
-# Compile bonus objects with BONUS flag
-bonus_objs:
-	@echo "Compiling bonus version..."
-	@$(CC) $(CFLAGS) -DBONUS -c $(BONUS_SRCS) -o $(BONUS_OBJS)
 
 # Compile object files
 %.o: %.c
@@ -112,20 +104,11 @@ run: $(NAME)
 	@echo "Running mandatory version..."
 	./$(NAME) $(MAPS_DIR)/valid.cub
 
-# Run bonus version with default map
-run_bonus: $(NAME_BONUS)
-	@echo "Running bonus version..."
-	./$(NAME_BONUS) $(MAPS_DIR)/valid.cub
 
 # Test mandatory version
 test: $(NAME)
 	@echo "Testing mandatory version..."
 	./$(NAME) $(MAPS_DIR)/valid.cub
-
-# Test bonus version
-test_bonus: $(NAME_BONUS)
-	@echo "Testing bonus version..."
-	./$(NAME_BONUS) $(MAPS_DIR)/valid.cub
 
 # Verify project structure
 check:
@@ -141,11 +124,6 @@ install:
 	@echo "Installing dependencies..."
 	sudo apt-get update
 	sudo apt-get install gcc make xorg libxext-dev libbsd-dev
-
-# Install bonus dependencies (SDL2 for audio and additional features)
-install_bonus: install
-	@echo "Installing bonus dependencies..."
-	sudo apt-get install libsdl2-dev libsdl2-mixer-dev
 
 # Show help
 help:

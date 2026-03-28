@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/28 10:48:14 by vmoura-d          #+#    #+#             */
+/*   Updated: 2026/03/28 11:55:43 by vmoura-d         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d_mandatory.h"
 
 // Trata evento de fechar a janela
 int	close_hook(t_game *game)
 {
-	mlx_destroy_window(game->mlx_ptr, game->win_ptr);
+	cleanup_game(game);
 	exit(0);
 	return (0);
 }
@@ -18,13 +30,13 @@ static int	validate_and_parse(int argc, char **argv, t_game *game)
 		printf("Uso: %s <arquivo.cub>\n", argv[0]);
 		return (0);
 	}
-	len = strlen(argv[1]);
-	if (len < 4 || strcmp(argv[1] + len - 4, ".cub") != 0)
+	len = ft_strlen(argv[1]);
+	if (len < 4 || ft_strcmp(argv[1] + len - 4, ".cub") != 0)
 	{
 		printf("Erro: ext .cub\n");
 		return (0);
 	}
-	memset(game, 0, sizeof(t_game));
+	ft_memset(game, 0, sizeof(t_game));
 	if (!parse_map_file(argv[1], game))
 	{
 		printf("Erro ao carregar o mapa\n");
@@ -40,14 +52,13 @@ static int	setup_graphics_and_resources(t_game *game)
 	game->mlx_ptr = mlx_init();
 	if (!game->mlx_ptr)
 		return (0);
-	game->win_ptr = mlx_new_window(game->mlx_ptr,
-		WINDOW_WIDTH, WINDOW_HEIGHT, "Cub3D - Mandatory");
+	game->win_ptr = mlx_new_window(game->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT,
+			"Cub3D - Mandatory");
 	if (!game->win_ptr)
 		return (0);
-	game->img_ptr = mlx_new_image(game->mlx_ptr,
-		WINDOW_WIDTH, WINDOW_HEIGHT);
-	game->img_data = mlx_get_data_addr(game->img_ptr,
-		&game->bits_per_pixel, &game->size_line, &game->endian);
+	game->img_ptr = mlx_new_image(game->mlx_ptr, WINDOW_WIDTH, WINDOW_HEIGHT);
+	game->img_data = mlx_get_data_addr(game->img_ptr, &game->bits_per_pixel,
+			&game->size_line, &game->endian);
 	if (!load_textures(game))
 		return (0);
 	return (1);
@@ -73,10 +84,10 @@ int	main(int argc, char **argv)
 		return (1);
 	if (!setup_graphics_and_resources(&game))
 	{
-		free_map(game.map);
+		cleanup_game(&game);
 		return (1);
 	}
 	setup_hooks_and_loop(&game);
-	free_map(game.map);
+	cleanup_game(&game);
 	return (0);
 }
