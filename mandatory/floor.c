@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   floor.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 10:39:30 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 10:45:48 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:11:45 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 // Retorna a cor do pixel da textura nas coordenadas mundiais (amostragem UV)
 static int	sample_texture(t_texture *tex, double world_x, double world_y)

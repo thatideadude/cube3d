@@ -4,7 +4,7 @@ WE ./textures/Doom/west.xpm
 EA ./textures/Doom/east.xpm
 
 F 139,69,19
-C 135,206,235
+C 0,0,0
 D ./textures/door/door.xpm
 
 111111111111111

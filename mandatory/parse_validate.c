@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse_validate.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 10:51:54 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:40 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:12:26 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 static int	is_invalid_walkable(t_game *game, int x, int y, char cell)
 {

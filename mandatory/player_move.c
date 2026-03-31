@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   player_move.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 10:55:37 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:00:25 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:12:38 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 #include <sys/time.h>
 
 static void	update_player_direction(t_game *game, double rot_speed)

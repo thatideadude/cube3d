@@ -45,7 +45,9 @@ MANDATORY_SRCS = $(MANDATORY_DIR)/main.c \
 	$(MANDATORY_DIR)/raycast_utils.c \
 	$(MANDATORY_DIR)/input.c \
 	$(MANDATORY_DIR)/cleanup.c \
-	$(MANDATORY_DIR)/floor.c
+	$(MANDATORY_DIR)/floor.c \
+	$(MANDATORY_DIR)/utils.c \
+
 # Collect all bonus source files automatically
 
 

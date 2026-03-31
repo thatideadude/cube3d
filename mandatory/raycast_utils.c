@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   raycast_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 11:03:26 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:41 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:12:53 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 // Calcula índice de textura e coordenada X na textura para a coluna x
 void	compute_wall_tex_coords(t_game *game, int x, int *texture_index,

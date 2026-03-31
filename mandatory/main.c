@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 10:48:14 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:43 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:08:30 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 // Trata evento de fechar a janela
 int	close_hook(t_game *game)

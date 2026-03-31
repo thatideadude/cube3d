@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3d_mandatory.h                                  :+:      :+:    :+:   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/03/28 11:07:38 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:38 by vmoura-d         ###   ########.fr       */
+/*   Created: 2026/03/31 09:45:27 by vinicius-mo       #+#    #+#             */
+/*   Updated: 2026/03/31 09:45:28 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CUB3D_MANDATORY_H
-# define CUB3D_MANDATORY_H
+#ifndef CUB3D_H
+# define CUB3D_H
 
 # include "../mlx/mlx.h"
 # include <fcntl.h>
@@ -25,13 +25,11 @@
 # define WINDOW_HEIGHT 768
 # define TILE_SIZE 64
 
-// Constantes para raycasting
 # define FOV 60
 # define NUM_RAYS WINDOW_WIDTH
 # define PI 3.14159265359
 # define DR 0.0174533
 
-/* Shared tunables moved to header so split modules can use them */
 # define COLLISION_RADIUS 0.50
 # define MIN_RAY_DISTANCE 0.50
 # define SPRINT_MULT 1.8
@@ -113,7 +111,6 @@ typedef struct s_game
 	t_keys		keys;
 }				t_game;
 
-// Funções principais
 int				parse_map_file(char *filename, t_game *game);
 int				parse_file_to_temp_map(char *filename, char temp_map[50][1024],
 					int *map_lines, t_game *game);
@@ -134,13 +131,12 @@ void			render_frame(t_game *game);
 int				is_wall(t_game *game, int x, int y);
 int				close_hook(t_game *game);
 void			cleanup_game(t_game *game);
+void			free_texture_paths(t_game *game);
 
-/* Additional prototypes required after splitting files */
 int				get_floor_ceiling_color(t_game *game, int y, int is_ceiling,
 					double ray_angle);
 void			resolve_player_collision(t_game *game);
 
-/* New helper prototypes added to split large functions */
 int				handle_texture_directive(char *line, t_game *game);
 int				append_map_line(char temp_map[50][1024], int *map_lines,
 					char *line);

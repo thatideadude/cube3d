@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse_read.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 11:53:00 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:44 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:12:15 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 int	append_map_line(char temp_map[50][1024], int *map_lines, char *line)
 {

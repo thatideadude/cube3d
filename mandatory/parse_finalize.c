@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parse_finalize.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 10:49:11 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:39 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:12:10 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 // Copia o mapa temporário para game->map e conta jogadores
 static int	copy_map_and_count(char temp_map[50][1024], int map_lines,

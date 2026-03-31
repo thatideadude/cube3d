@@ -3,14 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 10:51:54 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:40 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:44:36 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
+
+static void	init_parser(t_game *game)
+{
+	int	i;
+
+	i = 0;
+	while (i < 6)
+	{
+		game->texture_paths[i] = NULL;
+		i++;
+	}
+	game->use_floor_texture = 0;
+	game->use_ceiling_texture = 0;
+	game->map = NULL;
+}
 
 static int	parse_component(char **str, int *value)
 {
@@ -73,38 +88,27 @@ void	free_map(char **map)
 	free(map);
 }
 
-// Verifica se as coordenadas (x,y) referem-se a uma parede
-int	is_wall(t_game *game, int x, int y)
-{
-	if (x < 0 || x >= game->map_width || y < 0 || y >= game->map_height)
-		return (1);
-	if (y >= game->map_height || x >= ft_strlen(game->map[y]))
-		return (1);
-	return (game->map[y][x] == '1');
-}
-
 // Parseia o ficheiro .cub montando as texturas e o mapa em memória
 int	parse_map_file(char *filename, t_game *game)
 {
 	char	temp_map[50][1024];
 	int		map_lines;
-	int		i;
 
-	i = 0;
-	while (i < 6)
-	{
-		game->texture_paths[i] = NULL;
-		i++;
-	}
-	game->use_floor_texture = 0;
-	game->use_ceiling_texture = 0;
+	init_parser(game);
 	if (!parse_file_to_temp_map(filename, temp_map, &map_lines, game))
+	{
+		free_texture_paths(game);
 		return (0);
+	}
 	if (!finalize_map(temp_map, map_lines, game))
+	{
+		free_texture_paths(game);
 		return (0);
+	}
 	if (!validate_map(game))
 	{
 		free_map(game->map);
+		free_texture_paths(game);
 		return (0);
 	}
 	return (1);

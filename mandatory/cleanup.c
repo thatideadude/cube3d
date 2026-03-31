@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 11:41:34 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:46:41 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:23:30 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 static void	destroy_loaded_textures(t_game *game)
 {
@@ -29,7 +29,7 @@ static void	destroy_loaded_textures(t_game *game)
 		mlx_destroy_image(game->mlx_ptr, game->ceiling_texture.img_ptr);
 }
 
-static void	free_texture_paths(t_game *game)
+void	free_texture_paths(t_game *game)
 {
 	int	i;
 

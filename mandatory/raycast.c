@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   raycast.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 11:01:02 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:55:38 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:12:57 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 // Desenha um pixel na imagem principal com a cor dada
 void	draw_pixel(t_game *game, int x, int y, int color)

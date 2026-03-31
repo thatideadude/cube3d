@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   textures.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 11:05:54 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/28 11:06:53 by vmoura-d         ###   ########.fr       */
+/*   Updated: 2026/03/31 09:13:04 by vinicius-mo      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d_mandatory.h"
+#include "cub3d.h"
 
 // Carrega as 4 texturas de parede (NO, SO, WE, EA)
 int	load_wall_textures(t_game *game)
