@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vinicius-moura <vinicius-moura@student.    +#+  +:+       +#+        */
+/*   By: vmoura-d <vmoura-d@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/28 10:48:14 by vmoura-d          #+#    #+#             */
-/*   Updated: 2026/03/31 09:08:30 by vinicius-mo      ###   ########.fr       */
+/*   Updated: 2026/04/06 10:27:23 by vmoura-d         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int	validate_and_parse(int argc, char **argv, t_game *game)
 	ft_memset(game, 0, sizeof(t_game));
 	if (!parse_map_file(argv[1], game))
 	{
-		printf("Erro ao carregar o mapa\n");
+		printf("Invalid map or wrong info / symbols on the map\n");
 		return (0);
 	}
 	return (1);

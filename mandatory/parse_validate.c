@@ -12,6 +12,12 @@
 
 #include "cub3d.h"
 
+static int	is_valid_map_char(char cell)
+{
+	return (cell == '0' || cell == '1' || cell == 'N' || cell == 'S'
+		|| cell == 'E' || cell == 'W' || cell == ' ');
+}
+
 static int	is_invalid_walkable(t_game *game, int x, int y, char cell)
 {
 	if (cell != '0' && cell != 'N' && cell != 'S' && cell != 'E' && cell != 'W')
@@ -42,6 +48,8 @@ int	validate_map(t_game *game)
 		while (x < ft_strlen(game->map[y]))
 		{
 			cell = game->map[y][x];
+			if (!is_valid_map_char(cell))
+				return (0);
 			if (is_invalid_walkable(game, x, y, cell))
 				return (0);
 			x++;

@@ -1,15 +1,17 @@
 # Project names
 NAME = cub3d
+.DEFAULT_GOAL := all
 
 # Directories
 MANDATORY_DIR = mandatory
 MLX_DIR = mlx
+MLX = $(MLX_DIR)/libmlx.a
 TEXTURES_DIR = textures
 MAPS_DIR = maps
 # Compilation
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g -I$(MLX_DIR)
-MLXFLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz -o3
+CFLAGS = -Wall -Wextra -Werror -g -std=gnu11 -I$(MLX_DIR)
+MLXFLAGS = -L$(MLX_DIR) -lmlx -lXext -lX11 -lm -lz
 
 # Source files
 MANDATORY_SRCS = $(MANDATORY_DIR)/main.c \
@@ -35,14 +37,6 @@ MANDATORY_SRCS = $(MANDATORY_DIR)/main.c \
 # Object files
 MANDATORY_OBJS = $(MANDATORY_SRCS:.c=.o)
 
-# MLX Library
-$(MLX_DIR)/libmlx.a:
-		if [ ! -d "$(MLX_DIR)" ]; then \
-			git clone https://github.com/42Paris/minilibx-linux.git $(MLX_DIR); \
-		fi; \
-		$(MAKE) -C $(MLX_DIR); \
-
-
 MANDATORY_HELPERS_OBJS = mandatory/parse.o mandatory/textures.o mandatory/player.o
 
 # Default target - builds mandatory version only
@@ -64,7 +58,11 @@ $(NAME):$(MLX) $(MANDATORY_OBJS)
 # Build MLX library
 $(MLX):
 	@echo "Building MLX library..."
-	@make -C $(MLX_DIR) > /dev/null 2>&1 || true
+	@if [ ! -f "$(MLX_DIR)/Makefile" ]; then \
+		rm -rf "$(MLX_DIR)"; \
+		git clone https://github.com/42Paris/minilibx-linux.git "$(MLX_DIR)"; \
+	fi
+	@$(MAKE) -C "$(MLX_DIR)" -f Makefile.mk INC=/usr/include CFLAGS='-O3 -I/usr/include -std=gnu11'
 
 # Clean object files
 clean:

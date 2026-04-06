@@ -108,3 +108,51 @@ The engine works by casting a "ray" for every vertical strip of the screen.
 ## 📜 License
 
 This project was developed as part of the 42 curriculum. Please refer to the school's guidelines regarding code sharing and peer-to-peer learning.
+
+Of course\! Here is the English version of that section and the conclusion of your README, maintaining a professional and technical tone.
+
+-----
+
+## 🤖 Use of AI
+
+This project was developed with the assistance of Artificial Intelligence, specially in explaining the deeper mathematics of raycasting as a **specialized tutor in computer graphics and linear algebra**.
+
+AI played a crucial role in two main areas:
+
+### 1\. Demystifying Raycasting Mathematics
+
+The concepts behind **cub3D** involve trigonometric and vector calculations that can be daunting at first. AI assisted in gaining a deep understanding of:
+
+  * **DDA (Digital Differential Analyzer)**: Step-by-step explanations of how the algorithm traverses the map grid efficiently without skipping walls.
+  * **Camera Vectors & Projection Planes**: Assistance in mathematically visualizing how to transform a direction vector into a Field of View (FOV).
+  * **Collision Calculation**: Formulas to determine the perpendicular distance to avoid the "fisheye" lens distortion.
+
+### 2\. Learning Rendering Techniques
+
+To transform raw data into pixels, AI was used to study:
+
+  * **Texture Buffering**: How to map $(x, y)$ coordinates from a `.xpm` texture onto a specific vertical strip of pixels on the screen.
+  * **Performance Optimization**: Strategies to minimize MiniLibX overhead by using image buffers to render frames entirely before pushing them to the window.
+  * **Logical Debugging**: Identifying memory leaks and edge cases during the parsing of `.cub` files.
+
+> **Note:** All code was written and reviewed manually. AI explanations were used to ensure every line of mathematical logic was fully understood, respecting the **Norminette** rules and academic integrity.
+
+-----
+
+## 💡 Lessons Learned
+
+  * **Memory Management**: Deep dive into dynamic allocation and preventing segmentation faults in C.
+  * **Applied Trigonometry**: Practical application of sine and cosine functions for real-time movement and rotation.
+  * **Data Structures**: Organizing complex structs to manage game states, images, and map data simultaneously.
+  * **Graphics Pipeline**: Understanding the flow from raw data parsing to the final pixel display.
+
+## 👥 Author
+
+  * **Vinicius Moura** - [GitHub](https://github.com/vinimoura99)
+  * **Marcelo Carvalho** - [GitHub](https://github.com/thatideadude)
+
+-----
+
+
+
+
